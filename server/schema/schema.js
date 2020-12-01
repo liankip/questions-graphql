@@ -33,7 +33,7 @@ const Question = require("../models/question");
 const PaginationArgType = new GraphQLInputObjectType({
   name: "PaginationArg",
   fields: {
-    offset: {
+    skip: {
       type: GraphQLInt,
     },
     limit: {
@@ -91,15 +91,15 @@ const RootQuery = new GraphQLObjectType({
       args: {
         pagination: {
           type: PaginationArgType,
-          defaultValue: { offset: 0, limit: 4 },
+          defaultValue: { skip: 0, limit: 4 },
         },
       },
       resolve: (parent, args) => {
-        const { offset, limit } = args.pagination;
+        const { skip, limit } = args.pagination;
         const query = Question.find({ IsActive: 1 }, null, {
           sort: { CreatedBy: 1, UpdatedBy: 1 },
         })
-          .skip(offset * limit)
+          .skip(skip * limit)
           .limit(limit);
 
         return {
@@ -149,6 +149,7 @@ const Mutation = new GraphQLObjectType({
 
     updateQuestion: {
       type: QuestionType,
+      parent: GraphQLList(QuestionType),
       args: {
         id: { type: GraphQLNonNull(GraphQLString) },
         uuid: { type: GraphQLNonNull(GraphQLString) },
@@ -179,20 +180,14 @@ const Mutation = new GraphQLObjectType({
       type: QuestionType,
       args: {
         id: { type: GraphQLNonNull(GraphQLString) },
-        //uuid: { type: GraphQLNonNull(GraphQLString) },
+        uuid: { type: GraphQLNonNull(GraphQLString) },
       },
       resolve(parent, args) {
-        //if (!args.uuid) return new Error("Not Authorized");
+        if (!args.uuid) return new Error("Not Authorized");
 
         const dQuestion = Question.findByIdAndDelete(args.id);
 
-        console.log(dQuestion);
-
-        if (dQuestion) {
-          return dQuestion;
-        } else {
-          return new Error("Unable to remove question");
-        }
+        return dQuestion;
       },
     },
   },
