@@ -1,5 +1,12 @@
 # questions-graphql
 
+Database Structure
+---------------
+In my case, i use mongodb in nodejs using mongoose. Name collections db_question
+- db_question
+  - questions
+  - users
+
 File Structure
 ---------------
 - Index.js (root or index file)
