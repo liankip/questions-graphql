@@ -47,7 +47,7 @@ using http://localhost:4000/graphql
 List Questions
 ```json
 {
-  questions(pagination: {offset: 0, limit: 4}) {
+  questions(pagination: {skip: 0, limit: 4}) {
     count
     items {
       id
@@ -59,6 +59,8 @@ List Questions
   }
 }
 ```
+
+note: For paginate change skip 0 to 1 to 2 and to 4
 
 Return Question
 ```json
